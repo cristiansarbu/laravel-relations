@@ -32,4 +32,12 @@ class EventTypeController extends Controller
 
         return response()->json(['message' => 'Event type created successfully.', 'data' => $eventType]);
     }
+
+    public function show(string $id) {
+        $eventType = EventType::find($id);
+        if (!$eventType) {
+            return response()->json(['message' => 'Event type does not exist', 'data' => null], 400);
+        }
+        return response()->json(['message' => 'null', 'data' => $eventType]);
+    }
 }

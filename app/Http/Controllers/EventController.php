@@ -19,11 +19,21 @@ class EventController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      */
-    public function create()
+    public function show(string $id)
     {
-        //
+        $event = Event::find($id);
+        if ($event) {
+            return response()->json(['message' => 'null', 'data' => $event], 200);
+        } else {
+            return response()->json(['message' => 'Event not found', 'data' => null], 400);
+        }
+    }
+
+    public function listUsers(Event $event) {
+        $users = $event->users;
+        return response()->json(['message' => null, 'data' => $users], 200);
     }
 
     /**
@@ -31,11 +41,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'event_name' => ['required', 'string', 'min:1', 'max:255'],
-            'event_detail' => ['string', 'min:1', 'max:255'],
-            'event_type_id' => ['required', 'numeric', ],
-        ]);
+        $validator = $this->validateEvent($request);
 
         if ($validator->fails()) {
             return response()->json($validator->messages(), 400);
@@ -44,7 +50,7 @@ class EventController extends Controller
         $eventType = EventType::find($request->get('event_type_id'));
 
         if (!$eventType) {
-            return response()->json(['message' => 'Event type does not exist.']);
+            return response()->json(['message' => 'Event type does not exist.', 'data' => null], 400);
         }
 
         $event = Event::create([
@@ -57,46 +63,12 @@ class EventController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $event = Event::find($id);
-        if ($event) {
-            return response()->json(['message' => 'null', 'data' => $event]);ñ
-        } else {
-            return response()->json(['message' => 'Event not found', 'data' => null], 400);
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public function listUsers(Event $event) {
-        $users = $event->users;
-        return response()->json(['message' => null, 'data' => $users], 200);
+    public function validateEvent(Request $request) {
+        return Validator::make($request->all(), [
+            'event_name' => ['required', 'string', 'min:1', 'max:255'],
+            'event_detail' => ['string', 'min:1', 'max:255'],
+            'event_type_id' => ['required', 'numeric'],
+        ]);
     }
 
 }
