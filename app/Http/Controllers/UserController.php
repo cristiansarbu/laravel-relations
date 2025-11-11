@@ -18,6 +18,19 @@ class UserController extends Controller
         $users = User::all();
         return response()->json(['data' => $users], 200);
     }
+
+    public function show(User $user)
+    {
+        return response()->json(['message'=>'User shown','data'=>$user],200);
+    }
+    public function show_address(User $user) {
+        return response()->json(['message'=>'','data'=>$user->address],200);
+    }
+
+    public function listEvents(User $user) {
+        $events = $user->events;
+        return response()->json(['message' => null, 'data' => $events], 200);
+    }
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -39,13 +52,6 @@ class UserController extends Controller
 
         return response()->json(['message'=>'User Created','data'=>$user],200);
     }
-    public function show(User $user)
-    {
-        return response()->json(['message'=>'User shown','data'=>$user],200);
-    }
-    public function show_address(User $user) {
-        return response()->json(['message'=>'','data'=>$user->address],200);
-    }
 
     public function bookEvent(Request $request, User $user, Event $event) {
         $note = '';
@@ -56,11 +62,6 @@ class UserController extends Controller
             return response()->json(['message' => 'User Event Created', 'data' => $event], 200);
         }
         return response()->json(['message' => 'Error', 'data' => null], 400);
-    }
-
-    public function listEvents(User $user) {
-        $events = $user->events;
-        return response()->json(['message' => null, 'data' => $events], 200);
     }
 }
 

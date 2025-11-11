@@ -16,10 +16,19 @@ class AddressController extends Controller
         $addresses = Address::all();
         return response()->json(['data' => $addresses], 200);
     }
-    public function store(Request $request)
+
+    public function show(Address $address)
     {
+        return response()->json(['message'=>'Address shown','data'=>$address],200);
+    }
+    public function show_user(Address $address) {
+        return response()->json(['message'=>'User shown','data'=>$address->user],200);
+    }
+
+    public function store(Request $request) {
         $emailValidator = $this->validateEmail();
         $addressValidator = $this->validateAddress();
+
         if ($emailValidator->fails() || $addressValidator->fails()) {
             return response()->json(['message' => 'Failed',
                 'email' => $emailValidator->messages(),
@@ -39,41 +48,6 @@ class AddressController extends Controller
         }
 
         return response()->json(['message' => 'Failed', 'data' => null], 400);
-
-
-//        $validator = Validator::make($request->all(), [
-//            'user_id' => ['required', 'numeric', 'exists:users,id'],
-//            'country' => 'required|string|max:255',
-//            'zipcode' => 'required|string|min:5|max:5',
-//        ]);
-//
-//        $user = User::find($request->get('user_id'));
-//
-//        $address = new Address($addressValidator->validate());
-//
-//        if ($user->address()->save($address)) {
-//
-//        }
-//
-//        if ($validator->fails()) {
-//            return response()->json($validator->messages(), 400);
-//        }
-//
-//        $address = User::create([
-//            'user_id' => $request->get('user_id'),
-//            'country' => $request->get('country'),
-//            'zipcode' => $request->get('zipcode'),
-//        ]);
-//
-//        return response()->json(['message'=>'Address Created','data'=>$address],200);
-    }
-
-    public function show(Address $address)
-    {
-        return response()->json(['message'=>'Address shown','data'=>$address],200);
-    }
-    public function show_user(Address $address) {
-        return response()->json(['message'=>'User shown','data'=>$address->user],200);
     }
 
     public function validateAddress() {
